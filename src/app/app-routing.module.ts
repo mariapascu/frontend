@@ -1,21 +1,38 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
 import {AppComponent} from './app.component';
 import {LoginComponent} from './component/login/login.component';
 import {LogoutComponent} from './component/logout/logout.component';
 import {HomeComponent} from './component/home/home.component';
+import {SignupComponent} from './component/signup/signup.component';
+import {StudentHomeComponent} from './component/student-home/student-home.component';
+import {TeacherHomeComponent} from './component/teacher-home/teacher-home.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: HomeComponent,
+    component: LoginComponent,
   },
   {
     path: 'login',
     component: LoginComponent
   },
-  {path: 'logout',
-  component: LogoutComponent}
+  {
+    path: 'signup',
+    component: SignupComponent
+  },
+  {
+    path: 'logout',
+    component: LogoutComponent
+  },
+  {
+    path: 'student-home',
+    component: StudentHomeComponent
+  },
+  {
+    path: 'teacher-home',
+    component: TeacherHomeComponent
+  }
 ];
 
 @NgModule({
@@ -27,4 +44,5 @@ const routes: Routes = [
   ],
   declarations: []
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

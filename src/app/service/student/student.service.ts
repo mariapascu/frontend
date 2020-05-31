@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {Student} from '../../model/student';
+import {User} from '../../model/user';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ export class StudentService {
   constructor(private httpClient: HttpClient) { }
 
   createStudent(firstName: string, lastName: string, email: string, password: string): Observable<Response>{
-    const student = new Student(firstName, lastName, email, password);
+    const student = new User(0, firstName, lastName, email, password, 'student');
     const answer = this.httpClient.post<Response>(this.studentUrl + 'add', student);
     console.log(answer);
     return answer;

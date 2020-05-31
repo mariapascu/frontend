@@ -1,9 +1,26 @@
-<div class="container">
-  <div>
-    User Name : <input type="text" name="username" [(ngModel)]="username">
-    Password : <input type="password" name="password" [(ngModel)]="password">
-  </div>
-  <button (click)=checkLogin() class="btn btn-success">
-    Login
-  </button>
+<div class="login-form">
+  <form (ngSubmit)="login()" [formGroup]="loginForm">
+    <mat-form-field class="login-form-field">
+      <mat-label>Email</mat-label>
+      <input matInput name="email" formControlName="email">
+      <mat-error *ngIf="loginForm.get('email').hasError('required')">
+        Email is required
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field class="login-form-field">
+      <mat-label>Password</mat-label>
+      <input matInput name="password" [type]="hide ? 'password' : 'text'" formControlName="password">
+      <mat-error *ngIf="loginForm.get('password').hasError('required')">
+        Password is required
+      </mat-error>
+      <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+              [attr.aria-pressed]="hide">
+        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+    </mat-form-field>
+    <div>
+      <button type="submit" mat-raised-button class="login-form-field">Login</button>
+      <button mat-raised-button routerLink="/signup" class="login-form-field">Sign Up</button>
+    </div>
+  </form>
 </div>

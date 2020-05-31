@@ -1,0 +1,10 @@
+.login-form {
+  width: 20%;
+  padding-top: 100px;
+  padding-left: 100px;
+}
+
+.login-form-field {
+  width: 97%;
+  margin-top: 3%;
+}
