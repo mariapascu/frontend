@@ -25,6 +25,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     if (sessionStorage.getItem('user') != null)  {
       console.log('hello');
+      this.router.navigate(['/student-home']);
     }
   }
 

@@ -1,0 +1,88 @@
+<app-student-navbar></app-student-navbar>
+<div class="problem-container">
+  <div style="width:30%;" class="problem-section">
+    <div class="problem-section-field">
+      <mat-select [(ngModel)]="selectedFigure" (selectionChange)="changeFigure()">
+        <mat-option *ngFor="let geometryFigure of geometryDataService.geometricFigures" [value]="geometryFigure">
+          {{geometryFigure}}
+        </mat-option>
+      </mat-select>
+    </div>
+    <div *ngIf="geometryFigureSelected()">
+      <form (ngSubmit)="addProperty()" [formGroup]="propertyForm">
+        <mat-form-field class="problem-section-field">
+          <mat-select formControlName="property">
+            <mat-option *ngFor="let property of geometricFigureProperties" [value]="property">
+              {{property}}
+            </mat-option>
+          </mat-select>
+          <!--          <mat-error *ngIf="propertyForm.get('property').hasError('required')">-->
+          <!--            Property is required-->
+          <!--          </mat-error>-->
+        </mat-form-field>
+        <mat-form-field class="problem-section-field">
+          <input matInput type="number" formControlName="value">
+          <mat-error
+            *ngIf="propertyForm.get('value').hasError('min') && !propertyForm.get('value').hasError('required')">
+            Please enter a valid value
+          </mat-error>
+          <!--          <mat-error *ngIf="propertyForm.get('value').hasError('required')">-->
+          <!--            Value is required-->
+          <!--          </mat-error>-->
+        </mat-form-field>
+        <button mat-raised-button type="submit" class="problem-section-field">Add property</button>
+      </form>
+    </div>
+    <div *ngIf="geometryFigureSelected()">
+      <form (ngSubmit)="addUnknownProperty()" [formGroup]="unknownPropertyForm">
+        <mat-form-field class="problem-section-field">
+          <mat-select formControlName="unknownProperty">
+            <mat-option *ngFor="let property of unknownProperties" [value]="property">
+              {{property}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="unknownPropertyForm.get('unknownProperty').hasError('required')">
+            Property is required
+          </mat-error>
+        </mat-form-field>
+        <button mat-raised-button type="submit" class="problem-section-field">Add unknown property</button>
+      </form>
+    </div>
+    <div>
+      <ul>
+        <li *ngFor="let recipient of propertyMap.keys()">
+          {{recipient}} --> {{propertyMap.get(recipient)}}
+        </li>
+      </ul>
+    </div>
+    <div *ngIf="unknownPropertySelected()" class="problem-section-field">
+      {{this.unknownProperty}} = ?
+    </div>
+    <div *ngIf="canSolveProblem()">
+      <button mat-raised-button color="primary" class="problem-section-field" (click)="solveProblem()">Solve Problem
+      </button>
+      <button mat-raised-button color="primary" class="problem-section-field" (click)="saveProblem()">Save problem
+      </button>
+    </div>
+    <div>
+      <button mat-raised-button color="primary" class="problem-section-field" (click)="reloadPage()">Solve new problem
+      </button>
+    </div>
+  </div>
+  <div style="width:40%;" class="problem-section">
+    <app-drawing></app-drawing>
+  </div>
+  <div style="width:30%;" class="problem-section">
+    <div *ngIf="existentSolution">
+      <ng-container *ngFor="let step of solutionSteps">
+        <ul style="list-style: none;">
+          <li *ngFor="let s of step" class="solution-step">
+            {{s}}
+          </li>
+        </ul>
+        <mat-divider></mat-divider>
+      </ng-container>
+
+    </div>
+  </div>
+</div>

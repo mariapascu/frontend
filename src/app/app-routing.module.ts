@@ -7,6 +7,8 @@ import {HomeComponent} from './component/home/home.component';
 import {SignupComponent} from './component/signup/signup.component';
 import {StudentHomeComponent} from './component/student-home/student-home.component';
 import {TeacherHomeComponent} from './component/teacher-home/teacher-home.component';
+import {ProblemHistoryComponent} from './component/problem-history/problem-history.component';
+import {ProblemDisplayComponent} from './component/problem-display/problem-display.component';
 
 const routes: Routes = [
   {
@@ -32,6 +34,14 @@ const routes: Routes = [
   {
     path: 'teacher-home',
     component: TeacherHomeComponent
+  },
+  {
+    path: 'problem-history',
+    component: ProblemHistoryComponent
+  },
+  {
+    path: 'problem-display',
+    component: ProblemDisplayComponent
   }
 ];
 

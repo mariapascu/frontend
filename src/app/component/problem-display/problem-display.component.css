@@ -1,0 +1,16 @@
+.problem-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  overflow: auto;
+  height: 89%;
+  margin-top: 0.75%;
+  margin-left: 0.75%;
+}
+
+.problem-section {
+  height: inherit;
+  border: 1px solid blue;
+  margin-right: 0.75%;
+  float: left;
+}

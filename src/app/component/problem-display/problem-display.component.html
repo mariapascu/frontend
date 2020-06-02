@@ -1,0 +1,25 @@
+<app-student-navbar></app-student-navbar>
+<div class="problem-container">
+  <div style="width:30%;" class="problem-section">
+    <div>
+      <ul>
+        <li *ngFor="let recipient of propertyMap.keys()">
+          {{recipient}} --> {{propertyMap.get(recipient)}}
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div style="width:40%;" class="problem-section">
+    How are you?
+  </div>
+  <div style="width:30%;" class="problem-section">
+    <ng-container *ngFor="let step of solutionSteps">
+      <ul style="list-style: none;">
+        <li *ngFor="let s of step" class="solution-step">
+          {{s}}
+        </li>
+      </ul>
+      <mat-divider></mat-divider>
+    </ng-container>
+  </div>
+</div>

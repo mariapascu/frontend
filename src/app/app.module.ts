@@ -26,6 +26,10 @@ import { StudentNavbarComponent } from './component/student-navbar/student-navba
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSelectModule} from '@angular/material/select';
 import {MatListModule} from '@angular/material/list';
+import { ProblemHistoryComponent } from './component/problem-history/problem-history.component';
+import {MatCardModule} from '@angular/material/card';
+import { ProblemDisplayComponent } from './component/problem-display/problem-display.component';
+import { DrawingComponent } from './component/drawing/drawing.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +43,10 @@ import {MatListModule} from '@angular/material/list';
     FailureDialogComponent,
     StudentHomeComponent,
     TeacherHomeComponent,
-    StudentNavbarComponent
+    StudentNavbarComponent,
+    ProblemHistoryComponent,
+    ProblemDisplayComponent,
+    DrawingComponent
   ],
     imports: [
         BrowserModule,
@@ -57,7 +64,8 @@ import {MatListModule} from '@angular/material/list';
         MatTabsModule,
         MatToolbarModule,
         MatSelectModule,
-        MatListModule
+        MatListModule,
+        MatCardModule
     ],
   providers: [],
   bootstrap: [AppComponent]
