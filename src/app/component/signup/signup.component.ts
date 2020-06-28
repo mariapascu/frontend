@@ -29,7 +29,6 @@ export class SignupComponent implements OnInit {
       Validators.required,
       Validators.pattern('^(?=.*\\d)(?=.*[a-zA-Z]).{6,}$'),
     ]),
-    role: new FormControl('student', [Validators.required])
   });
 
   constructor(private signupService: SignupService, private dialog: MatDialog) {
@@ -43,7 +42,7 @@ export class SignupComponent implements OnInit {
     if (this.signupForm.valid) {
       console.log(this.signupForm.value);
       const user = this.signupForm.value;
-      this.signupService.signup(user.firstName, user.lastName, user.email, user.password, user.role).subscribe(
+      this.signupService.signup(user.firstName, user.lastName, user.email, user.password, 'student').subscribe(
         result => {
           console.log(result);
           const successDialog = this.dialog.open(SignupSuccessDialogComponent);

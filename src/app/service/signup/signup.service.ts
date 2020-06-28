@@ -7,7 +7,7 @@ import {User} from '../../model/user';
   providedIn: 'root'
 })
 export class SignupService {
-  private signupUrl = 'http://localhost:8080/signup/';
+  private signupUrl = 'http://localhost:8080/user/signup/';
   constructor(private httpClient: HttpClient) {}
 
   signup(firstName: string, lastName: string, email: string, password: string, role: string): Observable<Response> {

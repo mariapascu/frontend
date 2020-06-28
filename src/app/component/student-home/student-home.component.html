@@ -1,24 +1,27 @@
 <app-student-navbar></app-student-navbar>
 <div class="problem-container">
   <div style="width:30%;" class="problem-section">
-    <div class="problem-section-field">
-      <mat-select [(ngModel)]="selectedFigure" (selectionChange)="changeFigure()">
-        <mat-option *ngFor="let geometryFigure of geometryDataService.geometricFigures" [value]="geometryFigure">
-          {{geometryFigure}}
-        </mat-option>
-      </mat-select>
+    <div class="section-title">SOLVE A PROBLEM</div>
+    <div>
+      <div class="helper-text problem-section-field">Select the geometric shape:</div>
+      <mat-form-field class="problem-section-field">
+        <mat-select [(ngModel)]="selectedShape" (selectionChange)="changeShape()">
+          <mat-option *ngFor="let geometryFigure of geometryDataService.geometricShapes" [value]="geometryFigure">
+            {{geometryFigure}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
-    <div *ngIf="geometryFigureSelected()">
+    <div *ngIf="geometryShapeSelected()">
+      <mat-divider class="problem-section-field"></mat-divider>
+      <div class="helper-text problem-section-field">Set its known properties(in cm):</div>
       <form (ngSubmit)="addProperty()" [formGroup]="propertyForm">
         <mat-form-field class="problem-section-field">
           <mat-select formControlName="property">
-            <mat-option *ngFor="let property of geometricFigureProperties" [value]="property">
+            <mat-option *ngFor="let property of geometricShapeProperties" [value]="property">
               {{property}}
             </mat-option>
           </mat-select>
-          <!--          <mat-error *ngIf="propertyForm.get('property').hasError('required')">-->
-          <!--            Property is required-->
-          <!--          </mat-error>-->
         </mat-form-field>
         <mat-form-field class="problem-section-field">
           <input matInput type="number" formControlName="value">
@@ -26,14 +29,13 @@
             *ngIf="propertyForm.get('value').hasError('min') && !propertyForm.get('value').hasError('required')">
             Please enter a valid value
           </mat-error>
-          <!--          <mat-error *ngIf="propertyForm.get('value').hasError('required')">-->
-          <!--            Value is required-->
-          <!--          </mat-error>-->
         </mat-form-field>
         <button mat-raised-button type="submit" class="problem-section-field">Add property</button>
       </form>
     </div>
-    <div *ngIf="geometryFigureSelected()">
+    <div *ngIf="geometryShapeSelected()">
+      <mat-divider class="problem-section-field"></mat-divider>
+      <div class="helper-text problem-section-field">Set the unknown property:</div>
       <form (ngSubmit)="addUnknownProperty()" [formGroup]="unknownPropertyForm">
         <mat-form-field class="problem-section-field">
           <mat-select formControlName="unknownProperty">
@@ -49,14 +51,16 @@
       </form>
     </div>
     <div>
-      <ul>
+      <div class="helper-text problem-section-field" *ngIf="propertyMap.length > 0">Known properties: </div>
+      <ul style="list-style: none;">
         <li *ngFor="let recipient of propertyMap.keys()">
-          {{recipient}} --> {{propertyMap.get(recipient)}}
+          {{recipient}} = {{propertyMap.get(recipient)}} {{getMeasurement(recipient)}}
         </li>
       </ul>
     </div>
     <div *ngIf="unknownPropertySelected()" class="problem-section-field">
-      {{this.unknownProperty}} = ?
+      <div class="helper-text">Unknown property: </div>
+      <div class="problem-section-field">{{this.unknownProperty}} = ?</div>
     </div>
     <div *ngIf="canSolveProblem()">
       <button mat-raised-button color="primary" class="problem-section-field" (click)="solveProblem()">Solve Problem
@@ -70,19 +74,30 @@
     </div>
   </div>
   <div style="width:40%;" class="problem-section">
-    <app-drawing></app-drawing>
+    <div class="section-title">DRAWING</div>
+    <div *ngIf="problem!=null;" style="width:100%; height: inherit">
+      <app-drawing [problem]="problem"></app-drawing>
+    </div>
   </div>
   <div style="width:30%;" class="problem-section">
-    <div *ngIf="existentSolution">
-      <ng-container *ngFor="let step of solutionSteps">
+    <div class="section-title">SOLUTION</div>
+    <div *ngIf="existentSolution; else noSolution">
+      <ng-container *ngFor="let step of solutionSteps; let i = index">
         <ul style="list-style: none;">
+          <div class="step-title">Step {{i + 1}}</div>
           <li *ngFor="let s of step" class="solution-step">
             {{s}}
           </li>
         </ul>
         <mat-divider></mat-divider>
       </ng-container>
-
+      <div class="step-title">Final answer</div>
+      <div class="problem-section-field">{{unknownProperty}} = {{solutionValue}} {{getMeasurement(unknownProperty)}}</div>
     </div>
+    <ng-template #noSolution>
+      <div *ngIf="solutionError">
+        <div class="error-message">{{errorMessage}}</div>
+      </div>
+    </ng-template>
   </div>
 </div>

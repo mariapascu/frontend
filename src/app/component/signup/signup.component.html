@@ -47,12 +47,6 @@
         <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
       </button>
     </mat-form-field>
-    <div class="signup-form-field">
-      <mat-radio-group name="role" aria-label="Select the type of your account" formControlName="role">
-        <mat-radio-button value="student" [checked]="true">Student</mat-radio-button>
-        <mat-radio-button value="teacher">Teacher</mat-radio-button>
-      </mat-radio-group>
-    </div>
     <div>
       <button type="submit" class="signup-form-field" mat-raised-button>Sign Up</button>
       <button mat-raised-button class="signup-form-field" routerLink="/login">Login</button>

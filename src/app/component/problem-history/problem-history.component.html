@@ -1,7 +1,7 @@
 <app-student-navbar></app-student-navbar>
 <ng-container *ngFor = "let problem of problemList; let i = index">
   <mat-card class="problem-card" (click)="viewProblem(i)">
-    <mat-card-title>{{problem.figureName}}</mat-card-title>
+    <mat-card-title>{{problem.shapeName}}</mat-card-title>
     <mat-card-content>
       Known properties:
       <ng-container *ngFor="let p of knownProperties[i]; let j = index">
@@ -14,7 +14,3 @@
     </mat-card-content>
   </mat-card>
 </ng-container>
-<!--</ng-container>-->
-<!--<mat-card>-->
-<!--  {{problemList[0].unknownProperty}}-->
-<!--</mat-card>-->

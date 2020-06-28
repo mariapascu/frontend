@@ -9,11 +9,15 @@ interface GeometricFigureProperty {
   providedIn: 'root'
 })
 export class GeometryDataService {
-  geometricFigures: Array<string>;
-  geometricFiguresProperties = new Map<string, Array<string>>();
+  geometricShapes: Array<string>;
+  geometricShapesProperties = new Map<string, Array<string>>();
 
   constructor() {
-    this.geometricFigures = ['rectangular parallelepiped', 'sphere'];
-    this.geometricFiguresProperties.set('rectangular parallelepiped', ['length', 'width', 'height', 'total surface', 'base surface', 'lateral surface', 'volume', 'base perimeter']);
+    this.geometricShapes = ['rectangular parallelepiped', 'sphere', 'cube', 'cylinder', 'regular tetrahedron'];
+    this.geometricShapesProperties.set('rectangular parallelepiped', ['length', 'width', 'height', 'total surface', 'base surface', 'lateral surface', 'volume', 'base perimeter']);
+    this.geometricShapesProperties.set('cube', ['edge', 'lateral surface', 'total surface', 'volume', 'face diagonal', 'cube diagonal', 'base perimeter', 'base surface']);
+    this.geometricShapesProperties.set('sphere', ['radius', 'diameter', 'surface area', 'volume']);
+    this.geometricShapesProperties.set('cylinder', ['radius', 'height', 'base surface', 'total surface', 'volume', 'lateral surface']);
+    this.geometricShapesProperties.set('regular tetrahedron', ['edge', 'height', 'total surface', 'face surface', 'volume']);
   }
 }

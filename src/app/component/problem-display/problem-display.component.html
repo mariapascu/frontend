@@ -1,25 +1,49 @@
 <app-student-navbar></app-student-navbar>
 <div class="problem-container">
   <div style="width:30%;" class="problem-section">
-    <div>
-      <ul>
+    <div class="section-title">GIVEN PROBLEM</div>
+    <div class="problem-section-field">
+      <div class="helper-text ">Geometric shape:</div>
+      <div class="problem-section-field">{{problem.shapeName}}</div>
+    </div>
+    <div class="problem-section-field">
+      <div class="helper-text">Known properties: </div>
+      <ul style="list-style: none;">
         <li *ngFor="let recipient of propertyMap.keys()">
-          {{recipient}} --> {{propertyMap.get(recipient)}}
+          {{recipient}} = {{propertyMap.get(recipient)}} {{getMeasurement(recipient)}}
         </li>
       </ul>
     </div>
+    <div class="problem-section-field">
+      <div class="helper-text">Unknown property: </div>
+      <div class="problem-section-field">{{this.problem.unknownProperty}} = ?</div>
+    </div>
+    <button mat-raised-button color="primary" class="problem-section-field" (click)="deleteProblem()">Delete Problem
+    </button>
   </div>
   <div style="width:40%;" class="problem-section">
-    How are you?
+    <div class="section-title">DRAWING</div>
+    <div style="width:100%; height: inherit">
+      <app-drawing [problem]="newProblem"></app-drawing>
+    </div>
   </div>
   <div style="width:30%;" class="problem-section">
-    <ng-container *ngFor="let step of solutionSteps">
-      <ul style="list-style: none;">
-        <li *ngFor="let s of step" class="solution-step">
-          {{s}}
-        </li>
-      </ul>
-      <mat-divider></mat-divider>
-    </ng-container>
+    <div class="section-title">SOLUTION</div>
+    <div *ngIf="!solutionError; else noSolution">
+      <ng-container *ngFor="let step of solutionSteps; let i = index">
+        <ul style="list-style: none;">
+          <div class="step-title">Step {{i + 1}}</div>
+          <li *ngFor="let s of step" class="solution-step">
+            {{s}}
+          </li>
+        </ul>
+        <mat-divider></mat-divider>
+      </ng-container>
+      <div class="step-title">Final answer</div>
+      <div class="problem-section-field">{{problem.unknownProperty}} = {{solutionValue}} {{getMeasurement(problem.unknownProperty)}}</div>
+    </div>
+    <ng-template #noSolution>
+      <div class="error-message">{{errorMessage}}</div>
+    </ng-template>
   </div>
 </div>

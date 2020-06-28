@@ -1,0 +1,221 @@
+<app-student-navbar></app-student-navbar>
+<div class="container">
+  <div class="section" style="width: 35%">
+    <div class="section-title">CUSTOM SHAPE ELEMENTS</div>
+    <div class="section-field">
+      <button mat-raised-button (click)="addPointPressed()" class="add-button">Add a point</button>
+      <button mat-raised-button (click)="addLinePressed()" class="add-button">Add a line</button>
+      <button mat-raised-button (click)="addPlanePressed()" class="add-button">Add a plane</button>
+    </div>
+    <div *ngIf="this.showAddPointMenu">
+      <div>
+        <button mat-raised-button (click)="addCoordinatesPressed()" class="add-point">Add the coordinates</button>
+        <button mat-raised-button (click)="addIntersectionPressed()" class="add-point">Add an intersection</button>
+      </div>
+      <div *ngIf="this.showAddCoordinatesMenu">
+        <form (ngSubmit)="addPoint()" [formGroup]="addPointCoordinatesForm" class="section-field">
+          <div class="field-title">Set the coordinates:</div>
+          <mat-form-field class="shape-input">
+            <mat-label>Notation</mat-label>
+            <input matInput formControlName="notation">
+            <mat-error
+              *ngIf="addPointCoordinatesForm.get('notation').hasError('pattern') && !addPointCoordinatesForm.get('notation').hasError('required')">
+              Notation must be an upper case letter
+            </mat-error>
+            <mat-error *ngIf="addPointCoordinatesForm.get('notation').hasError('required')">
+              Notation is required
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="shape-input">
+            <mat-label>X</mat-label>
+            <input matInput type="number" formControlName="x">
+            <mat-error *ngIf="addPointCoordinatesForm.get('x').hasError('required')">
+              Coordinate is required
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="shape-input">
+            <mat-label>Y</mat-label>
+            <input matInput type="number" formControlName="y">
+            <mat-error *ngIf="addPointCoordinatesForm.get('y').hasError('required')">
+              Coordinate is required
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="shape-input">
+            <mat-label>Z</mat-label>
+            <input matInput type="number" formControlName="z">
+            <mat-error *ngIf="addPointCoordinatesForm.get('z').hasError('required')">
+              Coordinate is required
+            </mat-error>
+          </mat-form-field>
+          <div *ngIf="!(validPoint() === '')" class="error-message">{{validPoint()}}</div>
+          <button mat-raised-button color="primary" type="submit" class="shape-button">Add point</button>
+        </form>
+      </div>
+      <div *ngIf="this.showAddIntersectionMenu">
+        <form (ngSubmit)="addPoint()" [formGroup]="addPointIntersectionForm" class="section-field">
+          <div class="field-title">Set the coordinates:</div>
+          <mat-form-field class="shape-input">
+            <mat-label>Notation</mat-label>
+            <input matInput formControlName="notation">
+            <mat-error
+              *ngIf="addPointIntersectionForm.get('notation').hasError('pattern') && !addPointIntersectionForm.get('notation').hasError('required')">
+              Notation must be an upper case letter
+            </mat-error>
+            <mat-error *ngIf="addPointIntersectionForm.get('notation').hasError('required')">
+              Notation is required
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="shape-input">
+            <mat-select formControlName="line1">
+              <mat-option *ngFor="let line of getLines()" [value]="line">
+                {{line.getNotation()}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="addPointIntersectionForm.get('line1').hasError('required')">
+              Line is required
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="shape-input">
+            <mat-select formControlName="line2">
+              <mat-option *ngFor="let line of getLines()" [value]="line">
+                {{line.getNotation()}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="addPointIntersectionForm.get('line2').hasError('required')">
+              Line is required
+            </mat-error>
+          </mat-form-field>
+          <div *ngIf="!(validPoint() === '')" class="error-message">{{validPoint()}}</div>
+          <button mat-raised-button color="primary" type="submit" class="shape-button">Add point</button>
+        </form>
+      </div>
+    </div>
+    <div *ngIf="this.showAddLineMenu" class="section-field">
+      <form (ngSubmit)="addLine()" [formGroup]="addLineForm">
+        <div class="field-title">Add the first point</div>
+        <mat-form-field class="shape-input">
+          <mat-select formControlName="point1">
+            <mat-option *ngFor="let point of getPoints()" [value]="point">
+              {{point.notation}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="addLineForm.get('point1').hasError('required')">
+            Point is required
+          </mat-error>
+        </mat-form-field>
+        <div>
+          <button mat-raised-button (click)="addSecondPointPressed()" class="add-line">Add the second point</button>
+          <button mat-raised-button (click)="addLengthAndPropertyPressed()" class="add-line">Add property
+          </button>
+        </div>
+        <div *ngIf="showSecondPointMenu" class="section-field">
+          <mat-form-field class="shape-input">
+            <mat-select formControlName="point2">
+              <mat-option *ngFor="let point of getPoints()" [value]="point">
+                {{point.notation}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div *ngIf="showLengthAndPropertyMenu" class="section-field">
+          <mat-form-field class="shape-input">
+            <mat-label>Notation</mat-label>
+            <input matInput formControlName="notation">
+            <mat-error *ngIf="addLineForm.get('notation').hasError('pattern')">
+              Notation must be an upper case letter
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="shape-input">
+            <mat-select formControlName="property" [(ngModel)]="selectedProperty">
+              <mat-option *ngFor="let pointProperty of pointProperties" [value]="pointProperty">
+                {{pointProperty.getString()}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field *ngIf="needLength()" class="shape-input">
+            <mat-label>Length</mat-label>
+            <input matInput type="number" formControlName="length">
+            <mat-error *ngIf="addLineForm.get('length').hasError('min')">
+              Length must be a positive number
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div *ngIf="lineError() != ''" class="error-message">{{lineError()}}</div>
+        <button *ngIf="showSecondPointMenu || showLengthAndPropertyMenu" mat-raised-button color="primary" type="submit"
+                class="shape-button">Add Line
+        </button>
+      </form>
+    </div>
+    <div *ngIf="this.showAddPlaneMenu">
+      <form (ngSubmit)="addPlane()" [formGroup]="addPlaneForm" class="section-field">
+        <div class="field-title">Add the first point</div>
+        <mat-form-field class="shape-input">
+          <mat-select formControlName="point1">
+            <mat-option *ngFor="let point of getPoints()" [value]="point">
+              {{point.notation}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="addPlaneForm.get('point1').hasError('required')">
+            Point is required
+          </mat-error>
+        </mat-form-field>
+        <div class="field-title">Add the second point</div>
+        <mat-form-field class="shape-input">
+          <mat-select formControlName="point2">
+            <mat-option *ngFor="let point of getPoints()" [value]="point">
+              {{point.notation}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="addPlaneForm.get('point2').hasError('required')">
+            Point is required
+          </mat-error>
+        </mat-form-field>
+        <div class="field-title">Add the third point</div>
+        <mat-form-field class="shape-input">
+          <mat-select formControlName="point3">
+            <mat-option *ngFor="let point of getPoints()" [value]="point">
+              {{point.notation}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="addPlaneForm.get('point3').hasError('required')">
+            Point is required
+          </mat-error>
+        </mat-form-field>
+        <div *ngIf="!validPlane()" class="error-message">The points must be distinct!</div>
+        <button mat-raised-button color="primary" type="submit" class="shape-button">Add plane</button>
+      </form>
+    </div>
+    <mat-divider style="margin-top: 2%"></mat-divider>
+    <div>
+      <div *ngIf="arePoints()">
+        <div class="field-title">Points added</div>
+        <ul style="list-style: none;">
+          <li *ngFor="let point of getPoints()">
+            {{point.notation}}({{point.x}}, {{point.y}}, {{point.z}})
+          </li>
+        </ul>
+      </div>
+      <div *ngIf="areLines()">
+        <div class="field-title">Lines added</div>
+        <ul style="list-style: none;">
+          <li *ngFor="let line of getLines()">
+            {{line.getNotation()}}
+          </li>
+        </ul>
+      </div>
+      <div *ngIf="arePlanes()">
+        <div class="field-title">Planes added</div>
+        <ul style="list-style: none;">
+          <li *ngFor="let plane of getPlanes()">
+            {{plane.getNotation()}}
+          </li>
+        </ul>
+      </div>
+    </div>
+    <button mat-raised-button (click)="reloadPage()" color="primary" class="shape-button" style="margin-top: 2%">Create new drawing</button>
+  </div>
+  <div class="section" style="width: 65%">
+    <div class="section-title">DRAWING</div>
+    <div #drawingDiv id="drawingDiv" style="width: 100%; height: 100%"></div>
+  </div>
+</div>

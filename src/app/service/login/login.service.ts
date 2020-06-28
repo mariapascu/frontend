@@ -7,7 +7,7 @@ import {User} from '../../model/user';
   providedIn: 'root'
 })
 export class LoginService {
-  private loginUrl = 'http://localhost:8080/login/';
+  private loginUrl = 'http://localhost:8080/user/login/';
   constructor(private httpClient: HttpClient) { }
 
   login(email: string, password: string): Observable<User> {
@@ -15,7 +15,7 @@ export class LoginService {
   }
 
   isUserLoggedIn() {
-    const user = sessionStorage.getItem('username');
+    const user = sessionStorage.getItem('user');
     console.log(!(user === null));
     return !(user === null);
   }

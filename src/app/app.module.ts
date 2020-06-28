@@ -30,6 +30,7 @@ import { ProblemHistoryComponent } from './component/problem-history/problem-his
 import {MatCardModule} from '@angular/material/card';
 import { ProblemDisplayComponent } from './component/problem-display/problem-display.component';
 import { DrawingComponent } from './component/drawing/drawing.component';
+import { CustomShapeComponent } from './component/custom-shape/custom-shape.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { DrawingComponent } from './component/drawing/drawing.component';
     StudentNavbarComponent,
     ProblemHistoryComponent,
     ProblemDisplayComponent,
-    DrawingComponent
+    DrawingComponent,
+    CustomShapeComponent
   ],
     imports: [
         BrowserModule,

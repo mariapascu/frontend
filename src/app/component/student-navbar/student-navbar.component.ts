@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
+import {LoginService} from '../../service/login/login.service';
 
 @Component({
   selector: 'app-student-navbar',
@@ -7,10 +8,11 @@ import {Router} from '@angular/router';
   styleUrls: ['./student-navbar.component.css']
 })
 export class StudentNavbarComponent implements OnInit {
-
-  constructor(private router: Router) { }
+  name: string;
+  constructor(private router: Router, private loginService: LoginService) { }
 
   ngOnInit(): void {
+    this.name = this.loginService.getUser().firstName;
   }
 
   logout() {

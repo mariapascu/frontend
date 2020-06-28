@@ -9,6 +9,7 @@ import {StudentHomeComponent} from './component/student-home/student-home.compon
 import {TeacherHomeComponent} from './component/teacher-home/teacher-home.component';
 import {ProblemHistoryComponent} from './component/problem-history/problem-history.component';
 import {ProblemDisplayComponent} from './component/problem-display/problem-display.component';
+import {CustomShapeComponent} from './component/custom-shape/custom-shape.component';
 
 const routes: Routes = [
   {
@@ -28,7 +29,7 @@ const routes: Routes = [
     component: LogoutComponent
   },
   {
-    path: 'student-home',
+    path: 'home',
     component: StudentHomeComponent
   },
   {
@@ -42,6 +43,10 @@ const routes: Routes = [
   {
     path: 'problem-display',
     component: ProblemDisplayComponent
+  },
+  {
+    path: 'custom-shape',
+    component: CustomShapeComponent
   }
 ];
 

@@ -5,6 +5,11 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ProblemSolverService} from '../../service/problem-solver/problem-solver.service';
 import {TSMap} from 'typescript-map';
 import {Solution} from '../../model/solution';
+import {Problem} from '../../model/problem';
+import {LoginService} from '../../service/login/login.service';
+import {ProblemService} from '../../service/problem/problem.service';
+import {Router} from '@angular/router';
+import {MeasurementService} from '../../service/measurement/measurement.service';
 
 @Component({
   selector: 'app-student-home',
@@ -13,12 +18,12 @@ import {Solution} from '../../model/solution';
 })
 export class StudentHomeComponent implements OnInit {
   student: User;
-  selectedFigure: string;
+  selectedShape: string;
   propertyForm = new FormGroup({
     property: new FormControl(''),
-    value: new FormControl(0, [Validators.min(0.0001)])
+    value: new FormControl('', [Validators.min(0.0001)])
   });
-  geometricFigureProperties;
+  geometricShapeProperties;
   unknownProperties;
   propertyMap = new TSMap<string, number>();
   unknownPropertyForm = new FormGroup({
@@ -27,28 +32,37 @@ export class StudentHomeComponent implements OnInit {
   unknownProperty;
   solutionSteps;
   existentSolution = false;
+  solutionError = false;
+  problem: Problem;
+  errorMessage = '';
+  solutionValue = 0;
 
-  constructor(public geometryDataService: GeometryDataService, private problemSolverService: ProblemSolverService) {
+  constructor(public geometryDataService: GeometryDataService, private problemSolverService: ProblemSolverService,
+              private problemService: ProblemService, private loginService: LoginService, private router: Router,
+              private measurementService: MeasurementService) {
   }
 
   ngOnInit(): void {
-    this.student = JSON.parse(sessionStorage.getItem('user'));
-    console.log(this.student);
+    if (this.loginService.isUserLoggedIn() === false) {
+      this.router.navigate(['/login']);
+    }
+    this.student = this.loginService.getUser();
   }
 
-  changeFigure() {
-    console.log(this.selectedFigure);
+  changeShape() {
+    console.log(this.selectedShape);
     for (const key of this.propertyMap.keys()) {
       this.propertyMap.delete(key);
     }
     this.unknownProperty = null;
-    this.geometricFigureProperties = this.geometryDataService.geometricFiguresProperties.get(this.selectedFigure);
-    this.unknownProperties = this.geometryDataService.geometricFiguresProperties.get(this.selectedFigure);
-    console.log(this.geometricFigureProperties);
+    console.log(this.geometryDataService.geometricShapesProperties.get(this.selectedShape));
+    this.geometricShapeProperties = JSON.parse(JSON.stringify(this.geometryDataService.geometricShapesProperties.get(this.selectedShape)));
+    this.unknownProperties = this.geometryDataService.geometricShapesProperties.get(this.selectedShape);
+    console.log(this.geometricShapeProperties);
   }
 
-  geometryFigureSelected() {
-    return this.selectedFigure != null;
+  geometryShapeSelected() {
+    return this.selectedShape != null;
   }
 
   addProperty() {
@@ -56,28 +70,35 @@ export class StudentHomeComponent implements OnInit {
     if (this.propertyForm.valid && this.propertyForm.value.property !== '' && this.propertyForm.value.value > 0) {
       this.propertyMap.set(this.propertyForm.value.property, this.propertyForm.value.value);
       console.log(this.propertyMap);
-      const index = this.unknownProperties.indexOf(this.propertyForm.value.property);
-      console.log(index);
-      if (index >= 0) {
-        this.unknownProperties.splice(index, 1);
-        console.log(this.unknownProperties);
-      }
       this.propertyForm.reset();
     }
   }
 
   canSolveProblem() {
-    return this.selectedFigure != null && this.propertyMap.size() > 0 && this.unknownProperty != null;
+    return this.selectedShape != null && this.propertyMap.size() > 0 && this.unknownProperty != null;
   }
 
   solveProblem() {
-    this.problemSolverService.solveProblem(this.selectedFigure, this.unknownProperty, this.propertyMap).subscribe(
+    const user = this.loginService.getUser();
+    this.problem = new Problem(1, user.id, this.selectedShape, this.unknownProperty, this.propertyMap);
+    this.problemSolverService.solveForGivenProblem(this.problem).subscribe(
       result => {
         console.log(result);
         this.existentSolution = true;
+        this.solutionError = false;
         this.solutionSteps = result.solutionSteps;
+        this.solutionValue = result.solution;
       },
-      error => console.log(error)
+      error => {
+        console.log(error);
+        this.solutionError = true;
+        if (error['error']['message'] !== '') {
+          this.errorMessage = error['error']['message'];
+        }
+        else {
+          this.errorMessage = 'Unexpected Error';
+        }
+      }
     );
   }
 
@@ -96,11 +117,15 @@ export class StudentHomeComponent implements OnInit {
   }
 
   saveProblem() {
-    this.problemSolverService.saveProblem(this.selectedFigure, this.unknownProperty, this.propertyMap).subscribe(
+    this.problemService.saveProblem(this.selectedShape, this.unknownProperty, this.propertyMap).subscribe(
       result => {
         console.log(result);
       },
       error => console.log(error)
     );
+  }
+
+  getMeasurement(recipient: string) {
+    return this.measurementService.getMeasurement(recipient);
   }
 }

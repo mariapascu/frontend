@@ -3,14 +3,47 @@
   flex-direction: row;
   justify-content: flex-end;
   overflow: auto;
-  height: 89%;
+  height: 95%;
   margin-top: 0.75%;
   margin-left: 0.75%;
 }
 
 .problem-section {
   height: inherit;
-  border: 1px solid blue;
   margin-right: 0.75%;
   float: left;
+}
+
+.section-title {
+  font-size: 150%;
+  text-align: center;
+  font-weight: bolder;
+  margin-top: 3%;
+}
+
+.step-title {
+  font-size: 120%;
+  font-weight: bold;
+}
+
+.solution-step {
+  margin-top: 2%;
+  text-align: center;
+}
+
+.error-message {
+  font-size: 130%;
+  font-weight: bold;
+  color: red;
+  margin-top: 3%;
+  text-align: center;
+}
+
+.helper-text {
+  font-size: 125%;
+}
+
+.problem-section-field {
+  margin: 3% 25% 1% 5%;
+  width: 90%;
 }

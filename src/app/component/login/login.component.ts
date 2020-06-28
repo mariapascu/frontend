@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     if (sessionStorage.getItem('user') != null)  {
       console.log('hello');
-      this.router.navigate(['/student-home']);
+      this.router.navigate(['/home']);
     }
   }
 
@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
           sessionStorage.setItem('user', JSON.stringify(result));
           console.log(sessionStorage.getItem('user'));
           if (result['role'] === 'student') {
-            this.router.navigate(['/student-home']);
+            this.router.navigate(['/home']);
           }
           else {
             this.router.navigate(['/teacher-home']);

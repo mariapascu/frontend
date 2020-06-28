@@ -1,14 +1,15 @@
 import {TSMap} from 'typescript-map';
 
 export class Problem {
+  problemId: number;
   userId: number;
-  figureName: string;
+  shapeName: string;
   unknownProperty: string;
   propertyMap: TSMap<string, number>;
 
-  constructor(userId: number, figureName: string, unknownProperty: string, propertyMap: TSMap<string, number>) {
+  constructor(problemId: number, userId: number, shapeName: string, unknownProperty: string, propertyMap: TSMap<string, number>) {
     this.userId = userId;
-    this.figureName = figureName;
+    this.shapeName = shapeName;
     this.unknownProperty = unknownProperty;
     this.propertyMap = propertyMap;
   }
