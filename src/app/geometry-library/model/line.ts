@@ -21,4 +21,13 @@ export class Line {
     vector.push(this.point2.z - origin[2]);
     return [origin, vector];
   }
+
+  getLength() {
+    let length = (this.point2.x - this.point1.x) * (this.point2.x - this.point1.x);
+    length = length + (this.point2.y - this.point1.y) * (this.point2.y - this.point1.y);
+    length = length + (this.point2.z - this.point1.z) * (this.point2.z - this.point1.z);
+    length = Math.sqrt(length);
+    return length;
+
+  }
 }

@@ -7,6 +7,8 @@ import {Line} from '../../geometry-library/model/line';
 import {LineProperty} from '../../geometry-library/model/line-property';
 import {FailureDialogComponent} from '../../dialog/failure-dialog/failure-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import {LoginService} from '../../service/login/login.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-custom-shape',
@@ -50,21 +52,17 @@ export class CustomShapeComponent implements OnInit, AfterViewInit {
   pointProperties: Array<LineProperty>;
   selectedProperty: LineProperty;
 
-  constructor(private dialog: MatDialog) {
+  constructor(private dialog: MatDialog, private loginService: LoginService, private router: Router) {
   }
 
   ngOnInit(): void {
+    if (this.loginService.isUserLoggedIn() === false) {
+      this.router.navigate(['/login']);
+    }
   }
 
   ngAfterViewInit() {
     this.drawingHelper = new GeometryLibrary(this.drawingDiv);
-    let point1 = new Point('A', 1, 1, 1);
-    this.drawingHelper.addPoint(point1);
-    let point2 = new Point('B', 2, 5, 1);
-    this.drawingHelper.addPoint(point2);
-    this.drawingHelper.addLine(new Line(point1, point2));
-    point1 = new Point('C', 2, 0, -1);
-    this.drawingHelper.addPoint(point1);
   }
 
   addPoint() {
@@ -103,22 +101,20 @@ export class CustomShapeComponent implements OnInit, AfterViewInit {
     return (this.drawingHelper != null && this.drawingHelper.points.length > 0);
   }
 
-  validPoint(): string{
+  validPoint(): string {
     if (this.showAddCoordinatesMenu) {
       const values = this.addPointCoordinatesForm.value;
       const point = new Point(values.notation, values.x, values.y, values.z);
       if (this.drawingHelper.existentPoint(point)) {
         return 'Point already exists!';
-      }
-      else {
+      } else {
         return '';
       }
     } else if (this.showAddIntersectionMenu) {
       const values = this.addPointIntersectionForm.value;
       if (values.line1 != null && values.line1 !== '' && values.line1 === values.line2) {
         return 'The lines must be distinct!';
-      }
-      else {
+      } else {
         if (this.drawingHelper.existentPointNotation(values.notation)) {
           return 'Notation already exists';
         }
@@ -175,6 +171,11 @@ export class CustomShapeComponent implements OnInit, AfterViewInit {
       if (this.drawingHelper.existentPointNotation(values.notation)) {
         return 'Point already exists!';
       }
+      if (values.property != null && values.property.property === 'contained') {
+        if (values.length != null && values.length > values.property.line.getLength()) {
+          return 'Length must be smaller than the length of the chosen line!';
+        }
+      }
       return '';
     }
   }
@@ -198,8 +199,9 @@ export class CustomShapeComponent implements OnInit, AfterViewInit {
   }
 
   validPlane() {
-    if (this.addPlaneForm.valid) {
-      const values = this.addPlaneForm.value;
+    const values = this.addPlaneForm.value;
+    if (values.point1 != null && values.point1 !=='' && values.point2 != null && values.point2 !== '' &&
+        values.point3 != null && values.point3 !== '') {
       if (values.point1.notation === values.point2.notation) {
         return false;
       }
@@ -208,7 +210,7 @@ export class CustomShapeComponent implements OnInit, AfterViewInit {
       }
       return values.point2.notation !== values.point3.notation;
     }
-    return false;
+    return true;
   }
 
   setDefault() {
@@ -250,7 +252,6 @@ export class CustomShapeComponent implements OnInit, AfterViewInit {
   addLengthAndPropertyPressed() {
     this.showSecondPointMenu = false;
     this.showLengthAndPropertyMenu = true;
-    this.pointProperties = this.drawingHelper.getLineProperties();
   }
 
   addCoordinatesPressed() {
@@ -279,5 +280,19 @@ export class CustomShapeComponent implements OnInit, AfterViewInit {
     } else {
       return true;
     }
+  }
+
+  fixed(value) {
+    return +parseFloat(value).toFixed(2);
+  }
+
+  addLineProperties() {
+    if (this.addLineForm.value.point1 != null && this.addLineForm.value.point1 !== '') {
+      this.pointProperties = this.drawingHelper.getLineProperties(this.addLineForm.value.point1);
+    }
+  }
+
+  saveProblem() {
+
   }
 }

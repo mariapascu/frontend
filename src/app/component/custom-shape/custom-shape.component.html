@@ -94,7 +94,7 @@
       <form (ngSubmit)="addLine()" [formGroup]="addLineForm">
         <div class="field-title">Add the first point</div>
         <mat-form-field class="shape-input">
-          <mat-select formControlName="point1">
+          <mat-select formControlName="point1" (ngModelChange)="addLineProperties()" >
             <mat-option *ngFor="let point of getPoints()" [value]="point">
               {{point.notation}}
             </mat-option>
@@ -191,7 +191,7 @@
         <div class="field-title">Points added</div>
         <ul style="list-style: none;">
           <li *ngFor="let point of getPoints()">
-            {{point.notation}}({{point.x}}, {{point.y}}, {{point.z}})
+            {{point.notation}}({{fixed(point.x)}}, {{fixed(point.y)}}, {{fixed(point.z)}})
           </li>
         </ul>
       </div>
@@ -199,7 +199,7 @@
         <div class="field-title">Lines added</div>
         <ul style="list-style: none;">
           <li *ngFor="let line of getLines()">
-            {{line.getNotation()}}
+            {{line.getNotation()}}, length: {{fixed(line.getLength())}}
           </li>
         </ul>
       </div>
@@ -212,6 +212,7 @@
         </ul>
       </div>
     </div>
+<!--    <button mat-raised-button (click)="saveProblem()" color="primary" class="shape-button" style="margin-top: 2%">Save problem</button>-->
     <button mat-raised-button (click)="reloadPage()" color="primary" class="shape-button" style="margin-top: 2%">Create new drawing</button>
   </div>
   <div class="section" style="width: 65%">

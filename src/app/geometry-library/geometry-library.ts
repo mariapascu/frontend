@@ -16,6 +16,7 @@ export class GeometryLibrary {
   width: number;
   height;
   shape;
+  axesHelper;
   points = new Array<Point>();
   lines = new Array<Line>();
   planes = new Array<Plane>();
@@ -39,7 +40,7 @@ export class GeometryLibrary {
     this.camera = new THREE.PerspectiveCamera(
       75, this.width / this.height, 0.1, 1000
     );
-    this.camera.position.z = 15;
+    this.camera.position.z = 12;
     this.scene.add(this.camera);
 
     // lights
@@ -48,8 +49,8 @@ export class GeometryLibrary {
 
     const pointLight = new THREE.PointLight(0xffffff, 1);
     this.camera.add(pointLight);
-    const axesHelper = new THREE.AxesHelper( 18 );
-    this.scene.add( axesHelper );
+    this.axesHelper = new THREE.AxesHelper( 18 );
+    this.scene.add(this.axesHelper );
 
     const controls = new OrbitControls(this.camera, this.renderer.domElement);
 
@@ -195,10 +196,18 @@ export class GeometryLibrary {
       }
       else if (lineProperty.plane != null) {
         const coordinates = this.addLinePerpendicularOnPlane(origin, lineProperty.plane);
+        const point = new Point(lineProperty.notation, coordinates[0], coordinates[1], coordinates[2]);
+        this.addPoint(point);
+        const line = new Line(origin, point);
+        this.addLine(line);
       }
     }
     else if (lineProperty.property === 'contained') {
-
+      const coordinates = this.addLineOnAnotherLine(origin, lineProperty.line, lineProperty.length);
+      const point = new Point(lineProperty.notation, coordinates[0], coordinates[1], coordinates[2]);
+      this.addPoint(point);
+      const line = new Line(origin, point);
+      this.addLine(line);
     }
   }
 
@@ -229,17 +238,50 @@ export class GeometryLibrary {
   }
 
   private addLinePerpendicularOnPlane(origin: Point, plane: Plane) {
-
+    const planeEq = plane.getPlaneEquation();
+    const originCoordinates = [origin.x, origin.y, origin.z];
+    let m = 0;
+    let n = 0;
+    for (let i = 0; i < 3; i++) {
+      m = m + planeEq[i] * originCoordinates[i];
+      n = n + planeEq[i] * planeEq[i];
+    }
+    m = m + planeEq[3];
+    const t = m / n * (-1);
+    const coordinates = [];
+    for (let i = 0; i < 3; i++) {
+      coordinates.push(originCoordinates[i] + t * planeEq[i]);
+    }
+    return coordinates;
   }
 
-  getLineProperties() {
+  private addLineOnAnotherLine(origin: Point, line: Line, length: number) {
+    const lineEq = line.getLineEquation();
+    if (line.point2 === origin) {
+      length = line.getLength() - length;
+    }
+    let m = 0;
+    for (let i = 0; i < 3; i++) {
+      m = m + lineEq[1][i] * lineEq[1][i];
+    }
+    const t = Math.sqrt(length * length / m);
+    const coordinates = [];
+    for (let i = 0; i < 3; i++) {
+      coordinates.push(lineEq[0][i] + t * lineEq[1][i]);
+    }
+    return coordinates;
+  }
+
+  getLineProperties(point: Point) {
     const properties = [];
     console.log(this.lines);
     for (const l of this.lines) {
       let property = new LineProperty('perpendicular', l, null);
       properties.push(property);
-      property = new LineProperty('contained', l, null);
-      properties.push(property);
+      if (l.point1 === point || l.point2 === point) {
+        property = new LineProperty('contained', l, null);
+        properties.push(property);
+      }
     }
     for (const p of this.planes) {
       const property = new LineProperty('perpendicular', null, p);
@@ -272,8 +314,9 @@ export class GeometryLibrary {
   }
 
   setShapeScene(shapeName, geometry) {
+    this.scene.remove(this.axesHelper);
     if (shapeName === 'sphere') {
-      const material = new THREE.MeshBasicMaterial({color: 0xb32222, wireframe: true, opacity: 0.5});
+      const material = new THREE.MeshBasicMaterial({color: 0x1776a6, wireframe: true, opacity: 0.5});
       this.shape = new THREE.Mesh(geometry, material);
       this.shape.rotation.x += 0.5;
       this.shape.rotation.y -= 0.5;
@@ -329,11 +372,11 @@ export class GeometryLibrary {
 
   private setSphere() {
     console.log('sphere');
-    return new THREE.SphereBufferGeometry(1.5, 20, 20);
+    return new THREE.SphereBufferGeometry(5, 20, 20);
   }
 
   private setCube() {
-    return new THREE.BoxGeometry(1.5, 1.5, 1.5);
+    return new THREE.BoxGeometry(5, 5, 5);
   }
 
   private setParallelepiped(propertyMap: TSMap<string, number>) {
@@ -353,7 +396,7 @@ export class GeometryLibrary {
     if (maxValue < pHeight) {
       maxValue = pHeight;
     }
-    const scale = maxValue / 1.75;
+    const scale = maxValue / 8;
     pLength = pLength / scale;
     pWidth = pWidth / scale;
     pHeight = pHeight / scale;
@@ -371,13 +414,13 @@ export class GeometryLibrary {
   }
 
   private getCylinderDimensions(cRadius, cHeight) {
-    const scale = cRadius / 0.8;
+    const scale = cRadius / 4;
     cRadius = cRadius / scale;
     cHeight = cHeight / scale;
     return [cRadius, cHeight];
   }
 
   private setTetrahedron(propertyMap: TSMap<string, number>) {
-    return new THREE.TetrahedronGeometry(1.5);
+    return new THREE.TetrahedronGeometry(5);
   }
 }
